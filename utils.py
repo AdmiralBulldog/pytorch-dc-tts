@@ -9,6 +9,7 @@ import math
 import requests
 from tqdm import tqdm
 from skimage.io import imsave
+from cv2 import imwrite
 from skimage import img_as_ubyte
 
 
@@ -24,14 +25,27 @@ def get_last_checkpoint_file_name(logdir):
 def load_checkpoint(checkpoint_file_name, model, optimizer):
     """Loads the checkpoint into the given model and optimizer."""
     checkpoint = torch.load(checkpoint_file_name)
-    model.load_state_dict(checkpoint['state_dict'])
+    try:
+        model.load_state_dict(checkpoint['state_dict'])
+    except:
+        print("WARNING: checkpoint object is not subsriptable. Using load_state_dict")
+        model.load_state_dict(checkpoint.state_dict())
     model.float()
     if optimizer is not None:
-        optimizer.load_state_dict(checkpoint['optimizer'])
-    start_epoch = checkpoint.get('epoch', 0)
-    global_step = checkpoint.get('global_step', 0)
+        try:
+            optimizer.load_state_dict(checkpoint['optimizer'])
+        except:
+            print("WARNING: no optimizer checkpoint to load")
+    try:
+        start_epoch = checkpoint.get('epoch', 0)
+        global_step = checkpoint.get('global_step', 0)
+        print("loaded checkpoint epoch=%d step=%d" % (start_epoch, global_step))
+    except:
+        print("WARNING: Couldn't get start_epoch and global_step from chekpoint. Setting both to 0")
+        start_epoch = 0
+        global_step = 0
     del checkpoint
-    print("loaded checkpoint epoch=%d step=%d" % (start_epoch, global_step))
+
     return start_epoch, global_step
 
 
@@ -70,4 +84,5 @@ def save_to_png(file_name, array):
     """Save the given numpy array as a PNG file."""
     # from skimage._shared._warnings import expected_warnings
     # with expected_warnings(['precision']):
-    imsave(file_name, img_as_ubyte(array))
+    #imsave(file_name, img_as_ubyte(array))
+    imwrite(file_name, img_as_ubyte(array))

@@ -33,9 +33,9 @@ print('use_gpu', use_gpu)
 if use_gpu:
     torch.backends.cudnn.benchmark = True
 
-train_data_loader = Text2MelDataLoader(text2mel_dataset=SpeechDataset(['texts', 'mels', 'mel_gates']), batch_size=64,
+train_data_loader = Text2MelDataLoader(text2mel_dataset=SpeechDataset(['texts', 'mels', 'mel_gates']), batch_size=60,
                                        mode='train')
-valid_data_loader = Text2MelDataLoader(text2mel_dataset=SpeechDataset(['texts', 'mels', 'mel_gates']), batch_size=64,
+valid_data_loader = Text2MelDataLoader(text2mel_dataset=SpeechDataset(['texts', 'mels', 'mel_gates']), batch_size=60,
                                        mode='valid')
 
 text2mel = Text2Mel(vocab).cuda()
@@ -60,9 +60,11 @@ def get_lr():
 
 
 def lr_decay(step, warmup_steps=4000):
-    new_lr = hp.text2mel_lr * warmup_steps ** 0.5 * min((step + 1) * warmup_steps ** -1.5, (step + 1) ** -0.5)
-    optimizer.param_groups[0]['lr'] = new_lr
-
+    if hp.text2mel_lr_decay:
+        new_lr = hp.text2mel_lr * warmup_steps ** 0.5 * min((step + 1) * warmup_steps ** -1.5, (step + 1) ** -0.5)
+        optimizer.param_groups[0]['lr'] = new_lr
+    else:
+        optimizer.param_groups[0]['lr'] = hp.text2mel_lr
 
 def train(train_epoch, phase='train'):
     global global_step
@@ -138,9 +140,17 @@ def train(train_epoch, phase='train'):
             })
             logger.log_step(phase, global_step, {'loss_l1': l1_loss, 'loss_att': att_loss},
                             {'mels-true': S[:1, :, :], 'mels-pred': Y[:1, :, :], 'attention': A[:1, :, :]})
-            if global_step % 5000 == 0:
+            if global_step % hp.text2mel_save_every == 0:
                 # checkpoint at every 5000th step
                 save_checkpoint(logger.logdir, train_epoch, global_step, text2mel, optimizer)
+                
+                script_descriptor = open("synthesize.py")
+                a_script = script_descriptor.read()
+                sys.argv = ["synthesize.py", "--dataset=ljspeech"]
+                print("Synthesizing test sentences...")
+                exec(a_script)
+                script_descriptor.close()
+                torch.set_grad_enabled(True)
 
     epoch_loss = running_loss / it
     epoch_l1_loss = running_l1_loss / it

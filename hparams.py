@@ -23,8 +23,8 @@ class HParams:
     frame_length = 0.05  # seconds
     hop_length = int(sr * frame_shift)  # samples. =276.
     win_length = int(sr * frame_length)  # samples. =1102.
-    max_N = 180  # Maximum number of characters.
-    max_T = 210  # Maximum number of mel frames.
+    max_N = 300  # Maximum number of characters.
+    max_T = 400  # Maximum number of mel frames.
 
     e = 128  # embedding dimension
     d = 256  # Text2Mel hidden unit dimension
@@ -32,14 +32,22 @@ class HParams:
 
     dropout_rate = 0.05  # dropout
 
-    # Text2Mel network options
-    text2mel_lr = 0.005  # learning rate
-    text2mel_max_iteration = 300000  # max train step
+    dataset_dir = '/m/home/home4/48/kausiar1/unix/tts_data/esfan_vid'
+
+   # Text2Mel network options
+    text2mel_lr = 0.0003  # learning rate
+    text2mel_max_iteration = 600000  # max train step
     text2mel_weight_init = 'none'  # 'kaiming', 'xavier' or 'none'
     text2mel_normalization = 'layer'  # 'layer', 'weight' or 'none'
     text2mel_basic_block = 'gated_conv'  # 'highway', 'gated_conv' or 'residual'
+    text2mel_save_every = 1500
+    text2mel_lr_decay = False
 
-    # SSRN network options
+
+    # Synthesize
+    synthesize_samples_dir = 'esfan_vid'
+
+   # SSRN network options
     ssrn_lr = 0.0005  # learning rate
     ssrn_max_iteration = 150000  # max train step
     ssrn_weight_init = 'kaiming'  # 'kaiming', 'xavier' or 'none'

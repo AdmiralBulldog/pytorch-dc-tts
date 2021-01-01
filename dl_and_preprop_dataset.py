@@ -28,21 +28,21 @@ args = parser.parse_args()
 if args.dataset == 'ljspeech':
     dataset_file_name = 'LJSpeech-1.1.tar.bz2'
     datasets_path = os.path.join(os.path.dirname(os.path.realpath(__file__)), 'datasets')
-    dataset_path = os.path.join(datasets_path, 'LJSpeech-1.1')
+    dataset_path = os.path.join(datasets_path, hp.dataset_dir)
 
     if os.path.isdir(dataset_path) and False:
         print("LJSpeech dataset folder already exists")
         sys.exit(0)
     else:
         dataset_file_path = os.path.join(datasets_path, dataset_file_name)
-        if not os.path.isfile(dataset_file_path):
-            url = "http://data.keithito.com/data/speech/%s" % dataset_file_name
-            download_file(url, dataset_file_path)
-        else:
-            print("'%s' already exists" % dataset_file_name)
+        #if not os.path.isfile(dataset_file_path):
+        #    url = "http://data.keithito.com/data/speech/%s" % dataset_file_name
+        #    download_file(url, dataset_file_path)
+        #else:
+        #    print("'%s' already exists" % dataset_file_name)
 
-        print("extracting '%s'..." % dataset_file_name)
-        os.system('cd %s; tar xvjf %s' % (datasets_path, dataset_file_name))
+        #print("extracting '%s'..." % dataset_file_name)
+        #os.system('cd %s; tar xvjf %s' % (datasets_path, dataset_file_name))
 
         # pre process
         print("pre processing...")

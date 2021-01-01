@@ -23,25 +23,9 @@ if args.dataset == 'ljspeech':
     from datasets.lj_speech import vocab, get_test_data
 
     SENTENCES = [
-        "The birch canoe slid on the smooth planks.",
-        "Glue the sheet to the dark blue background.",
-        "It's easy to tell the depth of a well.",
-        "These days a chicken leg is a rare dish.",
-        "Rice is often served in round bowls.",
-        "The juice of lemons makes fine punch.",
-        "The box was thrown beside the parked truck.",
-        "The hogs were fed chopped corn and garbage.",
-        "Four hours of steady work faced us.",
-        "Large size in stockings is hard to sell.",
-        "The boy was there when the sun rose.",
-        "A rod is used to catch pink salmon.",
-        "The soft cushion broke the man's fall.",
-        "The salt breeze came across from the sea.",
-        "China has taken out hundreds of billions of dollars a year from our country",
-        "take it out of the United States Treasury",
-
+            "asd"
         ]
-    
+
 else:
     from datasets.mb_speech import vocab, get_test_data
 

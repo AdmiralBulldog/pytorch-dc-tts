@@ -7,6 +7,13 @@ import numpy as np
 
 from torch.utils.data import Dataset
 
+import os,sys,inspect
+currentdir = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
+parentdir = os.path.dirname(currentdir)
+sys.path.insert(0,parentdir) 
+
+from hparams import HParams as hp
+
 vocab = "PE abcdefghijklmnopqrstuvwxyz'.?"  # P: Padding, E: EOS.
 char2idx = {char: idx for idx, char in enumerate(vocab)}
 idx2char = {idx: char for idx, char in enumerate(vocab)}
@@ -48,7 +55,7 @@ def get_test_data(sentences, max_n):
 
 
 class LJSpeech(Dataset):
-    def __init__(self, keys, dir_name='LJSpeech-1.1'):
+    def __init__(self, keys, dir_name=hp.dataset_dir):
         self.keys = keys
         self.path = os.path.join(os.path.dirname(os.path.realpath(__file__)), dir_name)
         self.fnames, self.text_lengths, self.texts = read_metadata(os.path.join(self.path, 'metadata.csv'))
